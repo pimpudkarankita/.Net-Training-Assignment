@@ -8,8 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using MVC_CRUD1.DAL;
+using Microsoft.EntityFrameworkCore;
 
-namespace WebAppMVC
+namespace MVC_CRUD1
 {
     public class Startup
     {
@@ -24,6 +26,14 @@ namespace WebAppMVC
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+
+            //Fetching connection string from APPSETTINFS.JSON
+
+            var ConnectionString = Configuration.GetConnectionString("constr");
+
+            //Entity Framework
+
+            services.AddDbContext<EmployeeContext>(options => options.UseSqlServer(ConnectionString));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -31,12 +41,11 @@ namespace WebAppMVC
         {
             if (env.IsDevelopment())
             {
-                app.UseExceptionHandler("/Error");
-
+                app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                app.UseExceptionHandler("/Home/Error");
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
@@ -51,7 +60,7 @@ namespace WebAppMVC
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Employee}/{action=Index}/{id?}");
             });
         }
     }
